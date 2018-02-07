@@ -5,7 +5,7 @@ Framework
 
 assert = require 'cassert'
 fs = require "fs"
-JaySchema = require 'jayschema'
+SchemaValidator = require 'is-my-json-valid'
 RJSON = require 'relaxed-json'
 i18n = require 'i18n'
 express = require "express"
@@ -113,11 +113,11 @@ module.exports = (env) ->
       scheme._normalized = true
 
     _validateConfig: (config, schema, scope = "config") ->
-      js = new JaySchema()
-      errors = js.validate(config, schema)
-      if errors.length > 0
+      validate = SchemaValidator(schema)
+      valid = validate(config)
+      if !valid
         errorMessage = "Invalid #{scope}: "
-        for e, i in errors
+        for e, i in validate.errors
           if i > 0 then errorMessage += ", "
           if e.kind is "ObjectValidationError" and e.constraintName is "required"
             errorMessage += e.desc.replace(/^missing: (.*)$/, 'Missing property "$1"')

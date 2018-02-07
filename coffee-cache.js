@@ -34,7 +34,7 @@ if(process.env['PIMATIC_DAEMONIZED']) {
 // what version the parent relies on
 var coffee;
 try {
-  coffee = require('coffee-script');
+    coffee = require('coffeescript');
   // CoffeeScript 1.7 support
   if (typeof coffee.register === 'function') {
     coffee.register();
@@ -171,6 +171,11 @@ var compile = function(module, filename) {
 
 // overwrite require.extensions['.coffee'] the hard way:
 // This prevents coffee-script to redefine it with coffee-script/register
-require.extensions.__defineGetter__('.coffee', function(){
-  return compile;
+Object.defineProperty(require.extensions, '.coffee', {
+    get: function () {
+        return compile;
+    },
+    set: function (value) {
+        // Do nothing
+    }
 });

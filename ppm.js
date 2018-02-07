@@ -9,10 +9,10 @@ var path = require("path");
 var npm = require("npm");
 var semver = require('semver');
 
-if(!semver.satisfies(npm.version, '2.*')) {
+if(!semver.satisfies(npm.version, '>=4.*')) {
   console.log("Error: npm version " + npm.version + " is not supported by ppm. "
-    + "Please install npm v2 globally ('npm install -g npm@2') or locally in your "
-    + "pimatic-app directory ('npm install npm@2'). See you again.");
+    + "Please install npm v4 globally ('npm install -g npm@4') or locally in your "
+    + "pimatic-app directory ('npm install npm@4'). See you again.");
   process.exit(1);
 }
 
