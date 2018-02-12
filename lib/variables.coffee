@@ -46,14 +46,16 @@ module.exports = (env) ->
     }
 
   class DeviceAttributeVariable extends Variable
-    constructor: (vars, @_device, @_attrName) ->
+    constructor: (vars, _device, _attrName) ->
       super(
         vars, 
-        "#{@_device.id}.#{@_attrName}", 
+        "#{_device.id}.#{_attrName}",
         'attribute', 
-        @_device.attributes[@_attrName].unit, 
+        _device.attributes[_attrName].unit,
         yes
       )
+      @_device = _device
+      @_attrName = _attrName
       @_addListener()
 
     _addListener: () ->
@@ -395,6 +397,7 @@ module.exports = (env) ->
     inited: false
 
     constructor: (@framework, @variablesConfig) ->
+      super()
       # For each new device add a variable for every attribute
       @framework.on 'deviceAdded', (device) =>
         for attrName, attr of device.attributes

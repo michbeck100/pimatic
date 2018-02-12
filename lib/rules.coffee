@@ -160,6 +160,7 @@ module.exports = (env) ->
     predicateProviders: []
 
     constructor: (@framework) ->
+      super()
 
     addActionProvider: (ah) -> @actionProviders.push ah
     addPredicateProvider: (pv) -> @predicateProviders.push pv

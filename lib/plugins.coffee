@@ -62,6 +62,7 @@ module.exports = (env) ->
     restartRequired: false
 
     constructor: (@framework) ->
+      super()
       @modulesParentDir = path.resolve @framework.maindir, '../../'
 
     checkNpmVersion: () ->

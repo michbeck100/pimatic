@@ -100,6 +100,7 @@ module.exports = (env) ->
   class LogActionProvider extends ActionProvider
 
     constructor: (@framework) ->
+      super()
 
     parseAction: (input, context) ->
       stringToLogTokens = null
@@ -124,6 +125,7 @@ module.exports = (env) ->
   class LogActionHandler extends ActionHandler 
 
     constructor: (@framework, @stringToLogTokens) ->
+      super()
 
     executeAction: (simulate, context) ->
       @framework.variableManager.evaluateStringExpression(@stringToLogTokens).then( (strToLog) =>
@@ -148,6 +150,7 @@ module.exports = (env) ->
   class SetVariableActionProvider extends ActionProvider
 
     constructor: (@framework) ->
+      super()
 
     parseAction: (input, context) ->
       result = null
@@ -198,6 +201,7 @@ module.exports = (env) ->
   class SetVariableActionHandler extends ActionHandler 
 
     constructor: (@framework, @variableName, @rightTokens) ->
+      super()
 
     setup: ->
       @dependOnVariable(@framework.variableManager, @variableName)
@@ -225,6 +229,7 @@ module.exports = (env) ->
   class SetPresenceActionProvider extends ActionProvider
 
     constructor: (@framework) ->
+      super()
 
     parseAction: (input, context) ->
       retVar = null
@@ -267,6 +272,7 @@ module.exports = (env) ->
   class PresenceActionHandler extends ActionHandler 
 
     constructor: (@device, @state) ->
+      super()
 
     setup: ->
       @dependOnDevice(@device)
@@ -302,6 +308,7 @@ module.exports = (env) ->
   class ContactActionProvider extends ActionProvider
 
     constructor: (@framework) ->
+      super()
 
     parseAction: (input, context) ->
       retVar = null
@@ -342,6 +349,7 @@ module.exports = (env) ->
   class ContactActionHandler extends ActionHandler 
 
     constructor: (@device, @state) ->
+      super()
 
     setup: ->
       @dependOnDevice(@device)
@@ -385,6 +393,7 @@ module.exports = (env) ->
   class SwitchActionProvider extends ActionProvider
 
     constructor: (@framework) ->
+      super()
 
     # ### parseAction()
     ###
@@ -447,6 +456,7 @@ module.exports = (env) ->
   class SwitchActionHandler extends ActionHandler
 
     constructor: (@device, @state) ->
+      super()
 
     setup: ->
       @dependOnDevice(@device)
@@ -488,6 +498,7 @@ module.exports = (env) ->
   class ToggleActionProvider extends ActionProvider
 
     constructor: (@framework) ->
+      super()
 
     # ### parseAction()
     ###
@@ -535,7 +546,8 @@ module.exports = (env) ->
 
   class ToggleActionHandler extends ActionHandler
 
-    constructor: (@device) -> #nop
+    constructor: (@device) ->
+      super() #nop
 
     setup: ->
       @dependOnDevice(@device)
@@ -563,6 +575,7 @@ module.exports = (env) ->
   class ButtonActionProvider extends ActionProvider
 
     constructor: (@framework) ->
+      super()
 
     # ### parseAction()
     ###
@@ -612,6 +625,7 @@ module.exports = (env) ->
   class ButtonActionHandler extends ActionHandler
 
     constructor: (@device, @buttonId) ->
+      super()
       assert @device? and @device instanceof env.devices.ButtonsDevice
       assert @buttonId? and typeof @buttonId is "string"
 
@@ -650,6 +664,7 @@ module.exports = (env) ->
   class ShutterActionProvider extends ActionProvider
 
     constructor: (@framework) ->
+      super()
 
     # ### parseAction()
     ###
@@ -704,6 +719,7 @@ module.exports = (env) ->
   class ShutterActionHandler extends ActionHandler
 
     constructor: (@device, @position) ->
+      super()
 
     setup: ->
       @dependOnDevice(@device)
@@ -738,6 +754,7 @@ module.exports = (env) ->
   class StopShutterActionProvider extends ActionProvider
 
     constructor: (@framework) ->
+      super()
 
     # ### parseAction()
     ###
@@ -780,6 +797,7 @@ module.exports = (env) ->
   class StopShutterActionHandler extends ActionHandler
 
     constructor: (@device) ->
+      super()
 
     setup: ->
       @dependOnDevice(@device)
@@ -809,6 +827,7 @@ module.exports = (env) ->
   class DimmerActionProvider extends ActionProvider
 
     constructor: (@framework) ->
+      super()
 
     # ### parseAction()
     ###
@@ -866,6 +885,7 @@ module.exports = (env) ->
   class DimmerActionHandler extends ActionHandler
 
     constructor: (@framework, @device, @valueTokens) ->
+      super()
       assert @device?
       assert @valueTokens?
 
@@ -911,6 +931,7 @@ module.exports = (env) ->
   class HeatingThermostatModeActionProvider extends ActionProvider
 
     constructor: (@framework) ->
+      super()
 
     # ### parseAction()
     ###
@@ -967,6 +988,7 @@ module.exports = (env) ->
   class HeatingThermostatModeActionHandler extends ActionHandler
 
     constructor: (@framework, @device, @valueTokens) ->
+      super()
       assert @device?
       assert @valueTokens?
 
@@ -1002,6 +1024,7 @@ module.exports = (env) ->
   class HeatingThermostatSetpointActionProvider extends ActionProvider
 
     constructor: (@framework) ->
+      super()
 
     # ### parseAction()
     ###
@@ -1059,6 +1082,7 @@ module.exports = (env) ->
   class HeatingThermostatSetpointActionHandler extends ActionHandler
 
     constructor: (@framework, @device, @valueTokens) ->
+      super()
       assert @device?
       assert @valueTokens?
 
@@ -1105,6 +1129,7 @@ module.exports = (env) ->
   class TimerActionProvider extends ActionProvider
 
     constructor: (@framework) ->
+      super()
 
     # ### parseAction()
     ###
@@ -1155,6 +1180,7 @@ module.exports = (env) ->
   class TimerActionHandler extends ActionHandler
 
     constructor: (@device, @action) ->
+      super()
 
     setup: ->
       @dependOnDevice(@device)
@@ -1174,7 +1200,8 @@ module.exports = (env) ->
   # Pause play volume actions
   class AVPlayerPauseActionProvider extends ActionProvider 
   
-    constructor: (@framework) -> 
+    constructor: (@framework) ->
+      super()
     # ### executeAction()
     ###
     This function handles action in the form of `play device`
@@ -1211,7 +1238,8 @@ module.exports = (env) ->
 
   class AVPlayerPauseActionHandler extends ActionHandler
 
-    constructor: (@device) -> #nop
+    constructor: (@device) ->
+      super() #nop
 
     setup: ->
       @dependOnDevice(@device)
@@ -1228,7 +1256,8 @@ module.exports = (env) ->
   # stop play volume actions
   class AVPlayerStopActionProvider extends ActionProvider 
   
-    constructor: (@framework) -> 
+    constructor: (@framework) ->
+      super()
     # ### executeAction()
     ###
     This function handles action in the form of `execute "some string"`
@@ -1266,7 +1295,8 @@ module.exports = (env) ->
 
   class AVPlayerStopActionHandler extends ActionHandler
 
-    constructor: (@device) -> #nop
+    constructor: (@device) ->
+      super() #nop
 
     setup: ->
       @dependOnDevice(@device)
@@ -1282,7 +1312,8 @@ module.exports = (env) ->
 
   class AVPlayerPlayActionProvider extends ActionProvider 
   
-    constructor: (@framework) -> 
+    constructor: (@framework) ->
+      super()
     # ### executeAction()
     ###
     This function handles action in the form of `execute "some string"`
@@ -1319,7 +1350,8 @@ module.exports = (env) ->
         
   class AVPlayerPlayActionHandler extends ActionHandler
 
-    constructor: (@device) -> #nop
+    constructor: (@device) ->
+      super() #nop
 
     setup: ->
       @dependOnDevice(@device)
@@ -1335,7 +1367,8 @@ module.exports = (env) ->
 
   class AVPlayerVolumeActionProvider extends ActionProvider 
   
-    constructor: (@framework) -> 
+    constructor: (@framework) ->
+      super()
     # ### executeAction()
     ###
     This function handles action in the form of `execute "some string"`
@@ -1395,7 +1428,8 @@ module.exports = (env) ->
         
   class AVPlayerVolumeActionHandler extends ActionHandler
 
-    constructor: (@framework, @device, @valueTokens) -> #nop
+    constructor: (@framework, @device, @valueTokens) ->
+      super() #nop
 
     setup: ->
       @dependOnDevice(@device)
@@ -1415,7 +1449,8 @@ module.exports = (env) ->
 
   class AVPlayerNextActionProvider extends ActionProvider 
   
-    constructor: (@framework) -> 
+    constructor: (@framework) ->
+      super()
     # ### executeAction()
     ###
     This function handles action in the form of `execute "some string"`
@@ -1455,7 +1490,8 @@ module.exports = (env) ->
         return null
         
   class AVPlayerNextActionHandler extends ActionHandler
-    constructor: (@device) -> #nop
+    constructor: (@device) ->
+      super() #nop
 
     setup: ->
       @dependOnDevice(@device)
@@ -1471,7 +1507,8 @@ module.exports = (env) ->
 
   class AVPlayerPrevActionProvider extends ActionProvider 
   
-    constructor: (@framework) -> 
+    constructor: (@framework) ->
+      super()
     # ### executeAction()
     ###
     This function handles action in the form of `execute "some string"`
@@ -1511,7 +1548,8 @@ module.exports = (env) ->
         return null
         
   class AVPlayerPrevActionHandler extends ActionHandler
-    constructor: (@device) -> #nop
+    constructor: (@device) ->
+      super() #nop
 
     setup: ->
       @dependOnDevice(@device)

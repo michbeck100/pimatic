@@ -56,6 +56,7 @@ module.exports = (env) ->
         attr.discrete = (if attr.type is "number" then no else yes)
 
     constructor: ->
+      super()
       assert @id?, "The device has no ID"
       assert @name?, "The device has no name"
       assert @id.length isnt 0, "The ID of the device is empty"
@@ -256,6 +257,7 @@ module.exports = (env) ->
   class ErrorDevice extends Device
 
     constructor: (@config, @error) ->
+      super()
       @name = @config.name
       @id = @config.id
       super()
@@ -734,7 +736,8 @@ module.exports = (env) ->
 
     _lastPressedButton: null
 
-    constructor: (@config)->
+    constructor: (@config) ->
+      super()
       @id = @config.id
       @name = @config.name
       super()
@@ -766,6 +769,7 @@ module.exports = (env) ->
         description: "Sets the input value"
 
     constructor: (@config, lastState) ->
+      super()
       @name = @config.name
       @id = @config.id
       @_inputType = @config.type or "string"
@@ -803,6 +807,7 @@ module.exports = (env) ->
   class VariablesDevice extends Device
 
     constructor: (@config, lastState, @framework) ->
+      super()
       @id = @config.id
       @name = @config.name
       @_vars = @framework.variableManager
@@ -884,8 +889,10 @@ module.exports = (env) ->
             type: t.string
         description: "Sets the variable to the value"
 
-    constructor: (@config, lastState, @framework) ->
-      super(@config, lastState)
+    constructor: (config, lastState, framework) ->
+      super(config, lastState)
+      @config = config
+      @framework = framework
       @_variableName = (@config.variable||'').replace /^[\s\$]+|[\s]$/g, ''
 
       @framework.variableManager.on('variableValueChanged', @changeListener = (changedVar, value) =>
@@ -916,8 +923,10 @@ module.exports = (env) ->
             type: t.string
         description: "Sets the variable to the value"
 
-    constructor: (@config, lastState, @framework) ->
-      super(@config, lastState, @framework)
+    constructor: (config, lastState, framework) ->
+      super(config, lastState, framework)
+      @config = config
+      @framework = framework
 
     changeInputTo: (value) ->
       variable = @framework.variableManager.getVariableByName(@_variableName)
@@ -945,6 +954,7 @@ module.exports = (env) ->
   class DummySwitch extends SwitchActuator
 
     constructor: (@config, lastState) ->
+      super()
       @name = @config.name
       @id = @config.id
       @_state = lastState?.state?.value or off
@@ -961,6 +971,7 @@ module.exports = (env) ->
   class DummyDimmer extends DimmerActuator
 
     constructor: (@config, lastState) ->
+      super()
       @name = @config.name
       @id = @config.id
       @_dimlevel = lastState?.dimlevel?.value or 0
@@ -978,6 +989,7 @@ module.exports = (env) ->
   class DummyShutter extends ShutterController
 
     constructor: (@config, lastState) ->
+      super()
       @name = @config.name
       @id = @config.id
       @rollingTime = @config.rollingTime
@@ -1013,6 +1025,7 @@ module.exports = (env) ->
             type: "number"
 
     constructor: (@config, lastState) ->
+      super()
       @id = @config.id
       @name = @config.name
       @_temperatureSetpoint = lastState?.temperatureSetpoint?.value or 20
@@ -1045,6 +1058,7 @@ module.exports = (env) ->
             type: "boolean"
 
     constructor: (@config, lastState) ->
+      super()
       @name = @config.name
       @id = @config.id
       @_presence = lastState?.presence?.value or off
@@ -1078,6 +1092,7 @@ module.exports = (env) ->
             type: "boolean"
 
     constructor: (@config, lastState) ->
+      super()
       @name = @config.name
       @id = @config.id
       @_contact = lastState?.contact?.value or off
@@ -1116,6 +1131,7 @@ module.exports = (env) ->
             type: "number"
 
     constructor: (@config, lastState) ->
+      super()
       @id = @config.id
       @name = @config.name
       @_temperature = lastState?.temperature?.value
@@ -1162,6 +1178,7 @@ module.exports = (env) ->
     template: "timer"
 
     constructor: (@config, lastState) ->
+      super()
       @id = @config.id
       @name = @config.name
       @_time = lastState?.time?.value or 0
@@ -1350,6 +1367,7 @@ module.exports = (env) ->
     deviceConfigExtensions: []
 
     constructor: (@framework, @devicesConfig) ->
+      super()
       @deviceConfigExtensions.push(new ConfirmDeviceConfigExtention())
       @deviceConfigExtensions.push(new LinkDeviceConfigExtention())
       @deviceConfigExtensions.push(new XButtonDeviceConfigExtension())

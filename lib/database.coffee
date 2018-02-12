@@ -47,6 +47,7 @@ module.exports = (env) ->
   class Database extends require('events').EventEmitter
 
     constructor: (@framework, @dbSettings) ->
+      super()
 
     init: () ->
       connection = _.clone(@dbSettings.connection)

@@ -15,7 +15,8 @@ S = require 'string'
 class Expression
 
 class AddExpression extends Expression
-  constructor: (@left, @right) -> #nop
+  constructor: (@left, @right) ->
+    super() #nop
   evaluate: (cache) -> 
     return @left.evaluate(cache, yes).then( (val1) => 
       @right.evaluate(cache, yes).then( (val2) => parseFloat(val1) + parseFloat(val2) )
@@ -30,7 +31,8 @@ class AddExpression extends Expression
       return rightUnit
 
 class SubExpression extends Expression
-  constructor: (@left, @right) -> #nop
+  constructor: (@left, @right) ->
+    super() #nop
   evaluate: (cache) -> 
     return @left.evaluate(cache, yes).then( (val1) => 
       @right.evaluate(cache, yes).then( (val2) => parseFloat(val1) - parseFloat(val2) )
@@ -45,7 +47,8 @@ class SubExpression extends Expression
       return rightUnit
 
 class MulExpression extends Expression
-  constructor: (@left, @right) -> #nop
+  constructor: (@left, @right) ->
+    super() #nop
   evaluate: (cache) -> 
     return @left.evaluate(cache, yes).then( (val1) => 
       @right.evaluate(cache, yes).then( (val2) => parseFloat(val1) * parseFloat(val2) )
@@ -63,7 +66,8 @@ class MulExpression extends Expression
       return rightUnit
 
 class DivExpression extends Expression
-  constructor: (@left, @right) -> #nop
+  constructor: (@left, @right) ->
+    super() #nop
   evaluate: (cache) -> 
     return @left.evaluate(cache, yes).then( (val1) => 
       @right.evaluate(cache, yes).then( (val2) => parseFloat(val1) / parseFloat(val2) )
@@ -84,13 +88,15 @@ class DivExpression extends Expression
         return null
 
 class NumberExpression extends Expression
-  constructor: (@value) -> #nop
+  constructor: (@value) ->
+    super() #nop
   evaluate: (cache) -> Promise.resolve @value
   toString: -> "num(#{@value})"
   getUnit: -> null
 
 class VariableExpression extends Expression
-  constructor: (@variable) -> #nop
+  constructor: (@variable) ->
+    super() #nop
   evaluate: (cache, expectNumeric) ->
     name = @variable.name
     val = cache[name]
@@ -117,7 +123,8 @@ class VariableExpression extends Expression
   toString: -> "var(#{@variable.name})"
 
 class FunctionCallExpression extends Expression
-  constructor: (@name, @func, @args) -> #nop
+  constructor: (@name, @func, @args) ->
+    super() #nop
   evaluate: (cache) ->
     context = {
       units: _.map(@args, (a) -> a.getUnit() )
@@ -137,13 +144,15 @@ class FunctionCallExpression extends Expression
     return ''
 
 class StringExpression extends Expression
-  constructor: (@value) -> #nop
+  constructor: (@value) ->
+    super() #nop
   evaluate: -> Promise.resolve @value
   toString: -> "str('#{@value}')"
   getUnit: -> null
 
 class StringConcatExpression extends Expression
-  constructor: (@left, @right) -> #nop
+  constructor: (@left, @right) ->
+    super() #nop
   evaluate: (cache) -> 
     return @left.evaluate(cache).then( (val1) => 
       @right.evaluate(cache).then( (val2) => "#{val1}#{val2}" )

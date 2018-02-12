@@ -83,6 +83,7 @@ module.exports = (env) ->
     ]
 
     constructor: (@framework) ->
+      super()
 
     # ### parsePredicate()
     parsePredicate: (input, context) ->  
@@ -128,6 +129,7 @@ module.exports = (env) ->
   class SwitchPredicateHandler extends PredicateHandler
 
     constructor: (@device, @state) ->
+      super()
       @dependOnDevice(@device)
     setup: ->
       @stateListener = (s) => @emit 'change', (s is @state)
@@ -159,6 +161,7 @@ module.exports = (env) ->
     ]
 
     constructor: (@framework) ->
+      super()
 
     parsePredicate: (input, context) ->
 
@@ -203,6 +206,7 @@ module.exports = (env) ->
   class PresencePredicateHandler extends PredicateHandler
 
     constructor: (@device, @negated) ->
+      super()
       @dependOnDevice(@device)
     setup: ->
       @presenceListener = (p) => 
@@ -236,6 +240,7 @@ module.exports = (env) ->
     ]
 
     constructor: (@framework) ->
+      super()
 
     parsePredicate: (input, context) ->
 
@@ -280,6 +285,7 @@ module.exports = (env) ->
   class ContactPredicateHandler extends PredicateHandler
 
     constructor: (@device, @negated) ->
+      super()
       @dependOnDevice(@device)
     setup: ->
       @contactListener = (p) => 
@@ -318,6 +324,7 @@ module.exports = (env) ->
     ]
 
     constructor: (@framework) ->
+      super()
 
     # ### parsePredicate()
     parsePredicate: (input, context) ->
@@ -418,6 +425,7 @@ module.exports = (env) ->
   class DeviceAttributePredicateHandler extends PredicateHandler
 
     constructor: (@device, @attribute, @comparator, @referenceValue) ->
+      super()
       @dependOnDevice(@device)
 
     setup: ->
@@ -474,6 +482,7 @@ module.exports = (env) ->
     ]
 
     constructor: (@framework) ->
+      super()
 
     # ### parsePredicate()
     parsePredicate: (input, context) ->
@@ -529,6 +538,7 @@ module.exports = (env) ->
   class DeviceAttributeWatchdogPredicateHandler extends PredicateHandler
 
     constructor: (@device, @attribute, @timeMs) ->
+      super()
       @dependOnDevice(@device)
     setup: ->
       @_state = false
@@ -570,6 +580,7 @@ module.exports = (env) ->
       ]
 
     constructor: (@framework) ->
+      super()
 
     parsePredicate: (input, context) ->
       result = null
@@ -615,6 +626,7 @@ module.exports = (env) ->
   class VariablePredicateHandler extends PredicateHandler
 
     constructor: (@framework, @leftTokens, @rightTokens, @comparator) ->
+      super()
 
     setup: ->
       @lastState = null
@@ -690,6 +702,7 @@ module.exports = (env) ->
       ]
 
     constructor: (@framework) ->
+      super()
 
     parsePredicate: (input, context) ->
       variableName = null
@@ -723,6 +736,7 @@ module.exports = (env) ->
   class VariableUpdatedPredicateHandler extends PredicateHandler
 
     constructor: (@framework, @variableName, @mode) ->
+      super()
 
     setup: ->
       @lastValue = null
@@ -783,6 +797,7 @@ module.exports = (env) ->
       ]
 
     constructor: (@framework) ->
+      super()
 
     parsePredicate: (input, context) ->
 
@@ -825,6 +840,7 @@ module.exports = (env) ->
   class ButtonPredicateHandler extends PredicateHandler
 
     constructor: (@provider, @device, @buttonId) ->
+      super()
       assert @device? and @device instanceof env.devices.ButtonsDevice
       assert @buttonId? and typeof @buttonId is "string"
       @dependOnDevice(@device)
@@ -854,6 +870,7 @@ module.exports = (env) ->
       ]
 
     constructor: (@framework) ->
+      super()
 
     parsePredicate: (input, context) ->
       m = M(input, context).match(["pimatic is starting"])
@@ -871,6 +888,7 @@ module.exports = (env) ->
   class StartupPredicateHandler extends PredicateHandler
 
     constructor: (@framework) ->
+      super()
 
     setup: ->
       @framework.once "after init", =>

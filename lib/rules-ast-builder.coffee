@@ -16,6 +16,7 @@ class BoolExpression
 
 class AndExpression extends BoolExpression
   constructor: (@type, @left, @right) ->
+    super()
 
   evaluate: (cache) -> 
     return @left.evaluate(cache).then( (val) => 
@@ -23,7 +24,8 @@ class AndExpression extends BoolExpression
     )
 
 class OrExpression extends BoolExpression
-  constructor: (@type, @left, @right) -> #nop
+  constructor: (@type, @left, @right) ->
+    super() #nop
 
   evaluate: (cache) -> 
     return @left.evaluate(cache).then( (val) => 
@@ -31,7 +33,8 @@ class OrExpression extends BoolExpression
     )
   
 class PredicateExpression extends BoolExpression
-  constructor: (@predicate) -> #nop
+  constructor: (@predicate) ->
+    super() #nop
     @type = "predicate"
   
   evaluate: (cache) ->

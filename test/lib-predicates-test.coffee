@@ -29,6 +29,7 @@ describe "PresencePredicateProvider", ->
 
     class PresenceDummySensor extends env.devices.PresenceSensor
       constructor: () ->
+        super()
         @id = 'test'
         @name = 'test device'
         super()
@@ -129,6 +130,7 @@ describe "ContactPredicateProvider", ->
 
     class ContactDummySensor extends env.devices.ContactSensor
       constructor: () ->
+        super()
         @id = 'test'
         @name = 'test device'
         super()
@@ -228,6 +230,7 @@ describe "SwitchPredicateProvider", ->
 
     class SwitchDummyDevice extends env.devices.SwitchActuator
       constructor: () ->
+        super()
         @id = 'test'
         @name = 'test device'
         @_state = on
@@ -334,6 +337,7 @@ describe "DeviceAttributePredicateProvider", ->
           unit: '°C'
 
       constructor: () ->
+        super()
         @id = 'test'
         @name = 'test sensor'
         super()
@@ -475,6 +479,7 @@ describe "VariablePredicateProvider", ->
           unit: '°C'
 
       constructor: () ->
+        super()
         @id = 'test'
         @name = 'test sensor'
         super()
