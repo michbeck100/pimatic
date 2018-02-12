@@ -1606,7 +1606,7 @@ module.exports = (env) ->
           else
             # the old device was not destroyed, so just throw the load device error
             throw loadDeviceError
-        
+
         oldDevice.emit 'changed', newDevice
         @emit 'deviceChanged', newDevice
 
