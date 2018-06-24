@@ -1611,7 +1611,7 @@ module.exports = (env) ->
         throw new Error("No id given")
       device = @getDeviceById(deviceConfig.id)
       unless device?
-        throw new Error('device not found')
+        throw new Error("device not found: #{deviceConfig.id}")
       return @recreateDevice(device, deviceConfig)
 
     removeDevice: (deviceId) ->
@@ -1647,7 +1647,7 @@ module.exports = (env) ->
       actionName = req.params.actionName
       device = @getDeviceById(deviceId)
       unless device?
-        throw new Error('device not found')
+        throw new Error("device not found: #{deviceId}")
       unless device.hasAction(actionName)
         throw new Error('device hasn\'t that action')
       action = device.actions[actionName]
@@ -1658,7 +1658,7 @@ module.exports = (env) ->
       actionName = call.params.actionName
       device = @getDeviceById(deviceId)
       unless device?
-        throw new Error('device not found')
+        throw new Error("device not found: #{deviceId}")
       unless device.hasAction(actionName)
         throw new Error('device hasn\'t that action')
       action = device.actions[actionName]
