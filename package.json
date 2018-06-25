@@ -100,7 +100,7 @@
     "grunt": "^1.0.1",
     "grunt-bump": "0.8.0",
     "grunt-cli": "^1.2.0",
-    "grunt-coffeelint": "vojtajina/grunt-coffeelint#coffelint2-dev",
+    "grunt-coffeelint": "vojtajina/grunt-coffeelint#coffeelint2-dev",
     "grunt-mocha-test": "^0.13.2",
     "mocha": "^3.2.0",
     "sinon": "^1.17.3",
