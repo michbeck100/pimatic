@@ -34,12 +34,14 @@ module.exports = (grunt) ->
       test:
         options:
           reporter: "spec"
-          require: ['coffee-errors'] #needed for right line numbers in errors
+          # coffee-errors isn't compatible with coffeescript 2
+          #require: ['coffee-errors'] #needed for right line numbers in errors
         src: ["test/*"]
       testPlugin:
         options:
           reporter: "spec"
-          require: ['coffee-errors'] #needed for right line numbers in errors
+          # coffee-errors isn't compatible with coffeescript 2
+          #require: ['coffee-errors'] #needed for right line numbers in errors
         src: ["test/plugins-test.coffee"]
       # blanket is used to record coverage
       testBlanket:
