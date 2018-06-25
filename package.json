@@ -97,11 +97,10 @@
   ],
   "devDependencies": {
     "blanket": "^1.2.2",
-    "coffee-errors": "^0.8.6",
     "grunt": "^1.0.1",
     "grunt-bump": "0.8.0",
     "grunt-cli": "^1.2.0",
-    "grunt-coffeelint": "^0.0.16",
+    "grunt-coffeelint": "vojtajina/grunt-coffeelint#coffelint2-dev",
     "grunt-mocha-test": "^0.13.2",
     "mocha": "^3.2.0",
     "sinon": "^1.17.3",
