@@ -256,8 +256,9 @@ module.exports = (env) ->
   ###
   class ErrorDevice extends Device
 
-    constructor: (@config, @error) ->
+    constructor: (config, error) ->
       super(config.id, config.name)
+      @config = config
 
     destroy: () ->
       super()
@@ -733,8 +734,10 @@ module.exports = (env) ->
 
     _lastPressedButton: null
 
-    constructor: (@config) ->
+    constructor: (config) ->
       super(config.id, config.name)
+      @config = config
+
 
     getButton: -> Promise.resolve(@_lastPressedButton)
 
@@ -762,8 +765,9 @@ module.exports = (env) ->
             type: t.string
         description: "Sets the input value"
 
-    constructor: (@config, lastState) ->
+    constructor: (config, lastState) ->
       super(config.id, config.name)
+      @config = config
 
       @_inputType = @config.type or "string"
 
@@ -798,8 +802,11 @@ module.exports = (env) ->
 
   class VariablesDevice extends Device
 
-    constructor: (@config, lastState, @framework) ->
+    constructor: (config, lastState, framework) ->
       super(config.id, config.name)
+      @config = config
+      @framework = framework
+
       @_vars = @framework.variableManager
       @_exprChangeListeners = []
       @attributes = {}
@@ -942,8 +949,9 @@ module.exports = (env) ->
 
   class DummySwitch extends SwitchActuator
 
-    constructor: (@config, lastState) ->
+    constructor: (config, lastState) ->
       super(config.id, config.name)
+      @config = config
       @_state = lastState?.state?.value or off
 
     changeStateTo: (state) ->
@@ -956,8 +964,9 @@ module.exports = (env) ->
 
   class DummyDimmer extends DimmerActuator
 
-    constructor: (@config, lastState) ->
+    constructor: (config, lastState) ->
       super(config.id, config.name)
+      @config = config
       @_dimlevel = lastState?.dimlevel?.value or 0
       @_state = lastState?.state?.value or off
 
@@ -971,8 +980,9 @@ module.exports = (env) ->
 
   class DummyShutter extends ShutterController
 
-    constructor: (@config, lastState) ->
+    constructor: (config, lastState) ->
       super(config.id, config.name)
+      @config = config
       @rollingTime = @config.rollingTime
       @_position = lastState?.position?.value or 'stopped'
 
@@ -1004,8 +1014,9 @@ module.exports = (env) ->
           valve:
             type: "number"
 
-    constructor: (@config, lastState) ->
+    constructor: (config, lastState) ->
       super(config.id, config.name)
+      @config = config
       @_temperatureSetpoint = lastState?.temperatureSetpoint?.value or 20
       @_mode = lastState?.mode?.value or "auto"
       @_battery = lastState?.battery?.value or "ok"
@@ -1034,8 +1045,9 @@ module.exports = (env) ->
           presence:
             type: "boolean"
 
-    constructor: (@config, lastState) ->
+    constructor: (config, lastState) ->
       super(config.id, config.name)
+      @config = config
       @_presence = lastState?.presence?.value or off
       @_triggerAutoReset()
 
@@ -1065,8 +1077,9 @@ module.exports = (env) ->
           contact:
             type: "boolean"
 
-    constructor: (@config, lastState) ->
+    constructor: (config, lastState) ->
       super(config.id, config.name)
+      @config = config
       @_contact = lastState?.contact?.value or off
 
     changeContactTo: (contact) ->
@@ -1101,8 +1114,9 @@ module.exports = (env) ->
           humidity:
             type: "number"
 
-    constructor: (@config, lastState) ->
+    constructor: (config, lastState) ->
       super(config.id, config.name)
+      @config = config
       @_temperature = lastState?.temperature?.value
       @_humidity = lastState?.humidity?.value
 
@@ -1145,8 +1159,9 @@ module.exports = (env) ->
 
     template: "timer"
 
-    constructor: (@config, lastState) ->
+    constructor: (config, lastState) ->
       super(config.id, config.name)
+      @config = config
       @_time = lastState?.time?.value or 0
       @_running = lastState?.running?.value or false
       @_setupInterval() if _running?
