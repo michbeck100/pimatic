@@ -55,7 +55,7 @@ module.exports = (env) ->
       unless attr.discrete?
         attr.discrete = (if attr.type is "number" then no else yes)
 
-    constructor: ->
+    constructor: (@id, @name) ->
       super()
       assert @id?, "The device has no ID"
       assert @name?, "The device has no name"
@@ -257,10 +257,7 @@ module.exports = (env) ->
   class ErrorDevice extends Device
 
     constructor: (@config, @error) ->
-      super()
-      @name = @config.name
-      @id = @config.id
-      super()
+      super(config.id, config.name)
 
     destroy: () ->
       super()
@@ -737,10 +734,7 @@ module.exports = (env) ->
     _lastPressedButton: null
 
     constructor: (@config) ->
-      super()
-      @id = @config.id
-      @name = @config.name
-      super()
+      super(config.id, config.name)
 
     getButton: -> Promise.resolve(@_lastPressedButton)
 
@@ -769,9 +763,8 @@ module.exports = (env) ->
         description: "Sets the input value"
 
     constructor: (@config, lastState) ->
-      super()
-      @name = @config.name
-      @id = @config.id
+      super(config.id, config.name)
+
       @_inputType = @config.type or "string"
 
       @attributes = {
@@ -782,7 +775,6 @@ module.exports = (env) ->
 
       @_defaultValue = if @_inputType is "string" then "" else 0
       @_input = lastState?.input?.value or @_defaultValue
-      super()
 
     getInput: () -> Promise.resolve(@_input)
 
@@ -807,9 +799,7 @@ module.exports = (env) ->
   class VariablesDevice extends Device
 
     constructor: (@config, lastState, @framework) ->
-      super()
-      @id = @config.id
-      @name = @config.name
+      super(config.id, config.name)
       @_vars = @framework.variableManager
       @_exprChangeListeners = []
       @attributes = {}
@@ -874,7 +864,6 @@ module.exports = (env) ->
             )
           )
           @_createGetter(name, getValue)
-      super()
 
     destroy: ->
       @_vars.cancelNotifyOnChange(cl) for cl in @_exprChangeListeners
@@ -935,7 +924,7 @@ module.exports = (env) ->
       @framework.variableManager.setVariableToValue(@_variableName, value, variable.unit)
       timePattern = /// ^([01]?[0-9]|2[0-3]):[0-5][0-9] ///
       hourPattern = ///
-            ^[01]?[0-9]|2[0-3] 
+            ^[01]?[0-9]|2[0-3]
             ///
 
       if value.match timePattern
@@ -954,11 +943,8 @@ module.exports = (env) ->
   class DummySwitch extends SwitchActuator
 
     constructor: (@config, lastState) ->
-      super()
-      @name = @config.name
-      @id = @config.id
+      super(config.id, config.name)
       @_state = lastState?.state?.value or off
-      super()
 
     changeStateTo: (state) ->
       @_setState(state)
@@ -971,12 +957,9 @@ module.exports = (env) ->
   class DummyDimmer extends DimmerActuator
 
     constructor: (@config, lastState) ->
-      super()
-      @name = @config.name
-      @id = @config.id
+      super(config.id, config.name)
       @_dimlevel = lastState?.dimlevel?.value or 0
       @_state = lastState?.state?.value or off
-      super()
 
     # Returns a promise that is fulfilled when done.
     changeDimlevelTo: (level) ->
@@ -989,12 +972,9 @@ module.exports = (env) ->
   class DummyShutter extends ShutterController
 
     constructor: (@config, lastState) ->
-      super()
-      @name = @config.name
-      @id = @config.id
+      super(config.id, config.name)
       @rollingTime = @config.rollingTime
       @_position = lastState?.position?.value or 'stopped'
-      super()
 
     stop: ->
       @_setPosition('stopped')
@@ -1025,14 +1005,11 @@ module.exports = (env) ->
             type: "number"
 
     constructor: (@config, lastState) ->
-      super()
-      @id = @config.id
-      @name = @config.name
+      super(config.id, config.name)
       @_temperatureSetpoint = lastState?.temperatureSetpoint?.value or 20
       @_mode = lastState?.mode?.value or "auto"
       @_battery = lastState?.battery?.value or "ok"
       @_synced = true
-      super()
 
     changeModeTo: (mode) ->
       @_setMode(mode)
@@ -1058,12 +1035,9 @@ module.exports = (env) ->
             type: "boolean"
 
     constructor: (@config, lastState) ->
-      super()
-      @name = @config.name
-      @id = @config.id
+      super(config.id, config.name)
       @_presence = lastState?.presence?.value or off
       @_triggerAutoReset()
-      super()
 
     changePresenceTo: (presence) ->
       @_setPresence(presence)
@@ -1092,11 +1066,8 @@ module.exports = (env) ->
             type: "boolean"
 
     constructor: (@config, lastState) ->
-      super()
-      @name = @config.name
-      @id = @config.id
+      super(config.id, config.name)
       @_contact = lastState?.contact?.value or off
-      super()
 
     changeContactTo: (contact) ->
       @_setContact(contact)
@@ -1131,12 +1102,9 @@ module.exports = (env) ->
             type: "number"
 
     constructor: (@config, lastState) ->
-      super()
-      @id = @config.id
-      @name = @config.name
+      super(config.id, config.name)
       @_temperature = lastState?.temperature?.value
       @_humidity = lastState?.humidity?.value
-      super()
 
     _setHumidity: (value) ->
       @_humidity = value
@@ -1178,13 +1146,10 @@ module.exports = (env) ->
     template: "timer"
 
     constructor: (@config, lastState) ->
-      super()
-      @id = @config.id
-      @name = @config.name
+      super(config.id, config.name)
       @_time = lastState?.time?.value or 0
       @_running = lastState?.running?.value or false
       @_setupInterval() if _running?
-      super()
 
     resetTimer: () ->
       if @_time is 0
