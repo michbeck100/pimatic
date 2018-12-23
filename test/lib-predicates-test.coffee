@@ -16,7 +16,7 @@ createDummyParseContext = ->
 
 describe "PresencePredicateProvider", ->
 
-  frameworkDummy = 
+  frameworkDummy =
     deviceManager:
       devices: {}
       getDevices: -> _.values(@devices)
@@ -29,10 +29,7 @@ describe "PresencePredicateProvider", ->
 
     class PresenceDummySensor extends env.devices.PresenceSensor
       constructor: () ->
-        super()
-        @id = 'test'
-        @name = 'test device'
-        super()
+        super('test', 'test device')
 
     sensorDummy = new PresenceDummySensor
 
@@ -89,7 +86,7 @@ describe "PresencePredicateProvider", ->
       assert(not info?)
 
   describe "PresencePredicateHandler", ->
-    describe '#on "change"', ->  
+    describe '#on "change"', ->
       predicateHandler = null
       before ->
         context = createDummyParseContext()
@@ -117,7 +114,7 @@ describe "PresencePredicateProvider", ->
 
 describe "ContactPredicateProvider", ->
 
-  frameworkDummy = 
+  frameworkDummy =
     deviceManager:
       devices: {}
       getDevices: -> _.values(@devices)
@@ -130,10 +127,7 @@ describe "ContactPredicateProvider", ->
 
     class ContactDummySensor extends env.devices.ContactSensor
       constructor: () ->
-        super()
-        @id = 'test'
-        @name = 'test device'
-        super()
+        super('test', 'test device')
 
     sensorDummy = new ContactDummySensor
 
@@ -189,7 +183,7 @@ describe "ContactPredicateProvider", ->
       assert(not info?)
 
   describe "PresencePredicateHandler", ->
-    describe '#on "change"', ->  
+    describe '#on "change"', ->
       predicateHandler = null
       before ->
         context = createDummyParseContext()
@@ -217,7 +211,7 @@ describe "ContactPredicateProvider", ->
 
 describe "SwitchPredicateProvider", ->
 
-  frameworkDummy = 
+  frameworkDummy =
     deviceManager:
       devices: {}
       getDevices: -> _.values(@devices)
@@ -230,11 +224,8 @@ describe "SwitchPredicateProvider", ->
 
     class SwitchDummyDevice extends env.devices.SwitchActuator
       constructor: () ->
-        super()
-        @id = 'test'
-        @name = 'test device'
+        super('test', 'test device')
         @_state = on
-        super()
 
     switchDummy = new SwitchDummyDevice()
 
@@ -288,7 +279,7 @@ describe "SwitchPredicateProvider", ->
 
   describe "SwitchPredicateHandler", ->
 
-    describe '#on "change"', ->  
+    describe '#on "change"', ->
       predicateHandler = null
       before ->
         context = createDummyParseContext()
@@ -317,7 +308,7 @@ describe "SwitchPredicateProvider", ->
 
 describe "DeviceAttributePredicateProvider", ->
 
-  frameworkDummy = 
+  frameworkDummy =
     deviceManager:
       devices: {}
       getDevices: -> _.values(@devices)
@@ -329,7 +320,7 @@ describe "DeviceAttributePredicateProvider", ->
     provider = new env.predicates.DeviceAttributePredicateProvider(frameworkDummy)
 
     class DummySensor extends env.devices.Sensor
-  
+
       attributes:
         testvalue:
           description: "a testvalue"
@@ -337,10 +328,7 @@ describe "DeviceAttributePredicateProvider", ->
           unit: '°C'
 
       constructor: () ->
-        super()
-        @id = 'test'
-        @name = 'test sensor'
-        super()
+        super('test', 'test sensor')
 
     sensorDummy = new DummySensor()
 
@@ -349,7 +337,7 @@ describe "DeviceAttributePredicateProvider", ->
 
   describe '#parsePredicate()', ->
 
-    comparators = 
+    comparators =
       'is': '=='
       'is equal': '=='
       'is equal to': '=='
@@ -420,7 +408,7 @@ describe "DeviceAttributePredicateProvider", ->
 
   describe "DeviceAttributePredicateHandler", ->
 
-    describe '#on "change"', ->  
+    describe '#on "change"', ->
       predicateHandler = null
       before ->
         context = createDummyParseContext()
@@ -471,7 +459,7 @@ describe "VariablePredicateProvider", ->
     provider = new env.predicates.VariablePredicateProvider(frameworkDummy)
 
     class DummySensor extends env.devices.Sensor
-  
+
       attributes:
         testvalue:
           description: "a testvalue"
@@ -479,10 +467,7 @@ describe "VariablePredicateProvider", ->
           unit: '°C'
 
       constructor: () ->
-        super()
-        @id = 'test'
-        @name = 'test sensor'
-        super()
+        super('test', 'test sensor')
 
       getTestvalue: -> Promise.resolve(42)
 
@@ -552,7 +537,7 @@ describe "VariablePredicateProvider", ->
 
   describe "VariablePredicateHandler", ->
 
-    describe '#on "change"', ->  
+    describe '#on "change"', ->
       predicateHandler = null
       after -> predicateHandler.destroy()
 
@@ -570,7 +555,7 @@ describe "VariablePredicateProvider", ->
           finish()
         frameworkDummy.variableManager.setVariableToValue('a', '21')
 
-    describe '#on "change"', ->  
+    describe '#on "change"', ->
       predicateHandler = null
       after -> predicateHandler.destroy()
 
@@ -590,7 +575,7 @@ describe "VariablePredicateProvider", ->
         sensorDummy.emit 'testvalue', 50
 
 
-    # describe '#on "change"', ->  
+    # describe '#on "change"', ->
     #   predicateHandler = null
     #   after -> predicateHandler.destroy()
 

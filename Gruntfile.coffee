@@ -74,7 +74,7 @@ module.exports = (grunt) ->
     fs = require "fs"
     path = require "path"
 
-    replaceAll = (find, replace, str) => 
+    replaceAll = (find, replace, str) =>
       escapeRegExp = (str) => str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")
       str.replace(new RegExp(escapeRegExp(find), 'g'), replace)
 
@@ -86,7 +86,7 @@ module.exports = (grunt) ->
   # Default task(s).
   grunt.registerTask "default", ["coffeelint", "mochaTest:test"]
   grunt.registerTask "test", ["coffeelint", "mochaTest:test"]
-  grunt.registerTask "coverage", 
+  grunt.registerTask "coverage",
     ["blanket", "mochaTest:testBlanket", "mochaTest:coverage", "clean-coverage"]
 
   for plugin in plugins

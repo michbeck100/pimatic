@@ -9,8 +9,8 @@ describe "ShutterController", ->
 
   class DummyShutter extends env.devices.ShutterController
 
-    id: "dummyShutter"
-    name: "DummyShutter"
+    constructor: () ->
+      super("dummyShutter", "DummyShutter")
 
     moveToPosition: (position) ->
       # do nothing

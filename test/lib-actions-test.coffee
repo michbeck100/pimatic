@@ -28,8 +28,8 @@ describe "SwitchActionHandler", ->
   switchActionProvider = new env.actions.SwitchActionProvider frameworkDummy
 
   class DummySwitch extends env.devices.SwitchActuator
-    id: 'dummy-switch-id'
-    name: 'dummy switch'
+    constructor: () ->
+      super('dummy-switch-id', 'dummy switch')
 
   dummySwitch = new DummySwitch()
   frameworkDummy.deviceManager.devices['dummy-switch-id'] = dummySwitch
@@ -123,9 +123,9 @@ describe "ShutterActionHandler", ->
   stopShutterActionProvider = new env.actions.StopShutterActionProvider frameworkDummy
 
   class Shutter extends env.devices.ShutterController
-    id: 'shutter-id'
-    name: 'shutter'
 
+    constructor: () ->
+      super('shutter-id', 'shutter')
     moveToPosition: () -> Promise.resolve()
 
   shutterDevice = new Shutter()
@@ -258,8 +258,8 @@ describe "DimmerActionHandler", ->
   dimmerActionProvider = new env.actions.DimmerActionProvider frameworkDummy
 
   class DimmerDevice extends env.devices.DimmerActuator
-    id: 'dummy-dimmer-id'
-    name: 'dummy dimmer'
+    constructor: () ->
+      super('dummy-dimmer-id', 'dummy dimmer')
 
   dummyDimmer = new DimmerDevice()
   frameworkDummy.deviceManager.devices['dummy-dimmer-id'] = dummyDimmer
