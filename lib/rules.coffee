@@ -2,11 +2,11 @@
 Rule System
 ===========
 
-This file handles the parsing and executing of rules. 
+This file handles the parsing and executing of rules.
 
 What's a rule
 ------------
-A rule is a string that has the format: "when _this_ then _that_". The _this_ part will be called 
+A rule is a string that has the format: "when _this_ then _that_". The _this_ part will be called
 the condition of the rule and the _that_ the actions of the rule.
 
 __Examples:__
@@ -19,28 +19,28 @@ __Examples:__
 __The condition and predicates__
 
 The condition of a rule consists of one or more predicates. The predicates can be combined with
-"and", "or" and can be grouped by parentheses ('[' and ']'). A predicate is either true or false at 
-a given time. There are special predicates, called event-predicates, that represent events. 
+"and", "or" and can be grouped by parentheses ('[' and ']'). A predicate is either true or false at
+a given time. There are special predicates, called event-predicates, that represent events.
 These predicate are just true in the moment a special event happen.
 
-Each predicate is handled by a Predicate Provider. Take a look at the 
+Each predicate is handled by a Predicate Provider. Take a look at the
 [predicates file](predicates.html) for more details.
 
 __for-suffix__
 
-A predicate can have a "for" as a suffix like in "music is playing for 5 seconds" or 
+A predicate can have a "for" as a suffix like in "music is playing for 5 seconds" or
 "tv is on for 2 hours". If the predicate has a for-suffix then the rule action is only triggered,
 when the predicate stays true the given time. Predicates that represent one time events like "10pm"
 can't have a for-suffix because the condition can never hold.
 
 __The actions__
 
-The actions of a rule can consists of one or more actions. Each action describes a command that 
-should be executed when the condition of the rule is true. Take a look at the 
+The actions of a rule can consists of one or more actions. Each action describes a command that
+should be executed when the condition of the rule is true. Take a look at the
 [actions.coffee](actions.html) for more details.
 ###
 
- 
+
 assert = require 'cassert'
 util = require 'util'
 Promise = require 'bluebird'
@@ -81,7 +81,7 @@ module.exports = (env) ->
     lastExecuteTime: null
 
     conditionExprTree: null
-      
+
     constructor: (@id, @name, @string) ->
       assert typeof @id is "string"
       assert typeof @name is "string"
@@ -130,7 +130,7 @@ module.exports = (env) ->
   class RuleManager extends require('events').EventEmitter
     # Array of the added rules
     # If a rule was successfully added, the rule has the form:
-    #  
+    #
     #     id: 'some-id'
     #     name: 'some name'
     #     string: 'if its 10pm and light is on then turn the light off'
@@ -141,18 +141,18 @@ module.exports = (env) ->
     #       { id: 'some-id1'
     #         provider: the corresponding provider }
     #     ]
-    #     tokens: ['predicate', '(', 0, ')', 'and', 
-    #              'predicate', '(', 1, ')' ] 
+    #     tokens: ['predicate', '(', 0, ')', 'and',
+    #              'predicate', '(', 1, ')' ]
     #     action: 'turn the light off'
     #     active: false or true
-    #  
+    #
     # If the rule had an error:
-    #  
+    #
     #     id: id
     #     string: 'if bla then blub'
     #     error: 'Could not find a provider that decides bla'
-    #     active: false 
-    #  
+    #     active: false
+    #
     rules: {}
     # Array of ActionHandlers: see [actions.coffee](actions.html)
     actionProviders: []
@@ -169,7 +169,7 @@ module.exports = (env) ->
     # This function parses a rule given by a string and returns a rule object.
     # A rule string is for example 'if its 10pm and light is on then turn the light off'
     # it get parsed to the follwoing rule object:
-    #  
+    #
     #     id: 'some-id'
     #     string: 'when its 10pm and light is on then turn the light off'
     #     conditionToken: 'its 10pm and light is on'
@@ -179,11 +179,11 @@ module.exports = (env) ->
     #       { id: 'some-id1'
     #         provider: the corresponding provider }
     #     ]
-    #     tokens: ['predicate', '(', 0, ')', 'and', 
-    #              'predicate', '(', 1, ')' ] 
+    #     tokens: ['predicate', '(', 0, ')', 'and',
+    #              'predicate', '(', 1, ')' ]
     #     action: 'turn the light off'
     #     active: false or true
-    #  
+    #
     # The function returns a promise!
     _parseRuleString: (id, name, ruleString, context) ->
       assert id? and typeof id is "string" and id.length isnt 0
@@ -193,26 +193,26 @@ module.exports = (env) ->
       rule = new Rule(id, name, ruleString)
       # Always return a promise
       return Promise.try( =>
-        
+
         ###
         First take the string apart, so that
-         
+
             parts = ["", "its 10pm and light is on", "turn the light off"].
-        
+
         ###
         parts = ruleString.split /^when\s|\sthen\s/
         # Check for the right parts count. Note the empty string at the beginning.
         switch
           when parts.length < 3
             throw new Error('The rule must start with "when" and contain a "then" part!')
-          when parts.length > 3 
+          when parts.length > 3
             throw new Error('The rule must exactly contain one "when" and one "then" part!')
         ###
-        Then extract the condition and actions from the rule 
-         
+        Then extract the condition and actions from the rule
+
             rule.conditionToken = "its 10pm and light is on"
             rule.actions = "turn the light off"
-         
+
         ###
         rule.conditionToken = parts[1].trim()
         rule.actionsToken = parts[2].trim()
@@ -241,23 +241,23 @@ module.exports = (env) ->
       assert context?
       ###
       Split the condition in a token stream.
-      For example: 
-        
+      For example:
+
           "12:30 and temperature > 10"
-       
-      becomes 
-       
+
+      becomes
+
           ['12:30', 'and', 'temperature > 30 C']
-       
+
       Then we replace all predicates with tokens of the following form
-       
+
           tokens = ['predicate', '(', 0, ')', 'and', 'predicate', '(', 1, ')']
-       
+
       and remember the predicates:
-       
+
           predicates = [ {token: '12:30'}, {token: 'temperature > 10'}]
-       
-      ### 
+
+      ###
       predicates = []
       tokens = []
       # For each token
@@ -293,7 +293,7 @@ module.exports = (env) ->
 
           # Try to match " and ", " or ", ...
           possibleTokens = [' and if ', ' and ', ' or when ', ' or ']
-          onMatch = (m, s) => 
+          onMatch = (m, s) =>
             token = s.trim()
             if token is 'and if' then justCondition = true
             else if token is 'or when' then justCondition = false
@@ -399,17 +399,17 @@ module.exports = (env) ->
           context.addError(
             """Next predicate of "#{nextInput}" is ambiguous."""
           )
-      return { 
-        predicate, token, nextInput, 
-        elements: parseResult?.elements 
+      return {
+        predicate, token, nextInput,
+        elements: parseResult?.elements
         forElements: timeParseResult?.elements
       }
 
-    _parseTimePart: (nextInput, prefixToken, context, options = null) ->
+    _parseTimePart: (nextInput, prefixToken, context, options = {}) ->
       # Parse the for-Suffix:
       timeExprTokens = null
       unit = null
-      onTimeduration = (m, tp) => 
+      onTimeduration = (m, tp) =>
         timeExprTokens = tp.tokens
         unit = tp.unit
 
@@ -449,7 +449,7 @@ module.exports = (env) ->
           tokens = tokens.concat ['action', '(', i, ')']
           # actions.push {
           #   token: token
-          #   handler: 
+          #   handler:
           # }
           onMatch = (m, s) => tokens.push s.trim()
           m = M(nextInput, context).match([' and '], onMatch)
@@ -491,7 +491,7 @@ module.exports = (env) ->
             exprTokens: timeParseResult.timeExprTokens
             unit: timeParseResult.unit
           }
-      # Try to match after as prefix: after 10 seconds log "42" 
+      # Try to match after as prefix: after 10 seconds log "42"
       parseAfter('prefix')
 
       # find a predicate provider for that can parse and decide the predicate:
@@ -541,7 +541,7 @@ module.exports = (env) ->
             context.addError(
               """Action "#{action.token}" can't have a "for"-Suffix."""
             )
-          
+
         else
           context.addError(
             """Next action of "#{nextInput}" is ambiguous."""
@@ -565,12 +565,12 @@ module.exports = (env) ->
       # And check if the rule is now true.
       @_evaluateConditionOfRule(rule, knownPredicates).then( (isTrue) =>
         # If the rule is now true, then execute its action
-        if isTrue 
+        if isTrue
           return @_executeRuleActionsAndLogResult(rule)
-      ).catch( (error) => 
+      ).catch( (error) =>
         env.logger.error """
           Error on evaluation of rule condition of rule #{rule.id}: #{error.message}
-        """ 
+        """
         env.logger.debug error
       )
       return
@@ -805,7 +805,7 @@ module.exports = (env) ->
           @_destroyActionsAndCancelSheduledActions(rule)
           rule.active = false
           rule.valid = false
-          rule.recreating = false 
+          rule.recreating = false
           env.logger.error("Error in rule #{rule.id}: #{error.message}")
           env.logger.debug(error.stack)
           # and emit the event.
@@ -814,8 +814,8 @@ module.exports = (env) ->
 
 
     # ###_evaluateConditionOfRule()
-    # This function returns a promise that will be fulfilled with true if the condition of the 
-    # rule is true. This function ignores all the "for"-suffixes of predicates. 
+    # This function returns a promise that will be fulfilled with true if the condition of the
+    # rule is true. This function ignores all the "for"-suffixes of predicates.
     # The `knownPredicates` is an object containing a value for
     # each predicate for that the state is already known.
     _evaluateConditionOfRule: (rule, knownPredicates = {}) ->
@@ -824,8 +824,8 @@ module.exports = (env) ->
       return rule.conditionExprTree.evaluate(knownPredicates)
 
     # ###_executeRuleActionsAndLogResult()
-    # Executes the actions of the string using `executeAction` and logs the result to 
-    # the env.logger.    
+    # Executes the actions of the string using `executeAction` and logs the result to
+    # the env.logger.
     _executeRuleActionsAndLogResult: (rule) ->
       currentTime = (new Date).getTime()
       if rule.lastExecuteTime?
@@ -841,7 +841,7 @@ module.exports = (env) ->
         return actionResult.then( (result) =>
           [message, next] = (
             if typeof result is "string" then [result, null]
-            else 
+            else
               assert Array.isArray result
               assert result.length is 2
               result
@@ -873,19 +873,19 @@ module.exports = (env) ->
         do (action) =>
           promise = null
           if action.after?
-            unless simulate 
+            unless simulate
               # Cancel schedule for pending executes
               if action.scheduled?
                 action.scheduled.cancel(
                   "reschedule action #{action.token} in #{action.after.token}"
-                ) 
+                )
               # Schedule new action
               promise = @_evaluateTimeExpr(
-                action.after.exprTokens, 
+                action.after.exprTokens,
                 action.after.unit
               ).then( (ms) => @_scheduleAction(action, ms) )
             else
-              promise = @_executeAction(action, simulate).then( (message) => 
+              promise = @_executeAction(action, simulate).then( (message) =>
                 "#{message} after #{action.after.token}"
               )
           else
@@ -901,12 +901,12 @@ module.exports = (env) ->
 
     _executeAction: (action, simulate) =>
       # wrap into an fcall to convert thrown erros to a rejected promise
-      return Promise.try( => 
+      return Promise.try( =>
         promise = action.handler.executeAction(simulate)
         if action.for?
           promise = promise.then( (message) =>
             restoreActionPromise = @_evaluateTimeExpr(
-              action.for.exprTokens, 
+              action.for.exprTokens,
               action.for.unit
             ).then( (ms) => @_scheduleAction(action, ms, yes) )
             return [message, restoreActionPromise]
@@ -924,7 +924,7 @@ module.exports = (env) ->
         action.scheduled.cancel("clearing scheduled action")
 
       return new Promise( (resolve, reject) =>
-        timeoutHandle = setTimeout((=> 
+        timeoutHandle = setTimeout((=>
           promise = (
             unless isRestore then @_executeAction(action, no)
             else @_executeRestoreAction(action, no)
@@ -945,9 +945,9 @@ module.exports = (env) ->
       {variables, functions} = @framework.variableManager.getVariablesAndFunctions()
       return M.createParseContext(variables, functions)
 
-  
+
     # ###getRules()
-    getRules: () -> 
+    getRules: () ->
       rules = (r for id, r of @rules)
       # sort in config order
       rulesInConfig = _.map(@framework.config.rules, (r) => r.id )
@@ -1037,8 +1037,8 @@ module.exports = (env) ->
 
     updateRuleOrder: (ruleOrder) ->
       assert ruleOrder? and Array.isArray ruleOrder
-      @framework.config.rules = _.sortBy(@framework.config.rules,  (rule) => 
-        index = ruleOrder.indexOf rule.id 
+      @framework.config.rules = _.sortBy(@framework.config.rules,  (rule) =>
+        index = ruleOrder.indexOf rule.id
         return if index is -1 then 99999 else index # push it to the end if not found
       )
       @framework.saveConfig()

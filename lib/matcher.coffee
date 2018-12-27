@@ -26,7 +26,7 @@ class Matcher
   }
 
   for sign in ['<', '>', '<=', '>=']
-    comparators[sign] = _(comparators[sign]).map( 
+    comparators[sign] = _(comparators[sign]).map(
       (c) => [c, "is #{c}", "is #{c} than", "is #{c} as", "#{c} than", "#{c} as"]
     ).flatten().value()
 
@@ -49,7 +49,7 @@ class Matcher
   # Create a matcher for the input string, with the given parse context.
   constructor: (@input, @context = null, @prevInput = "", @elements = []) ->
 
-  
+
   # ###match()
   ###
   Matches the current inputs against the given pattern.
@@ -63,6 +63,9 @@ class Matcher
     unless Array.isArray patterns then patterns = [patterns]
     if typeof options is "function"
       callback = options
+      options = {}
+
+    if !options
       options = {}
 
     matches = []
@@ -84,7 +87,7 @@ class Matcher
 
       # If pattern is a string, then we can add an autocomplete for it.
       if typeof p is "string" and @context
-        showAc = (if options.acFilter? then options.acFilter(p) else true) 
+        showAc = (if options.acFilter? then options.acFilter(p) else true)
         if showAc
           if S(pT).startsWith(inputT) and @input.length < p.length
             @context?.addHint(autocomplete: p)
@@ -97,11 +100,11 @@ class Matcher
 
       if options.wildcard?
         wildcardMatch = S(inputT).startsWith(options.wildcard)
-      switch 
+      switch
         # Do a normal string match
         when typeof p is "string"
           doesMatch =  S(inputT).startsWith(pT)
-          if doesMatch 
+          if doesMatch
             match = p
             nextToken = @input.substring(p.length)
         # Do a regex match
@@ -109,7 +112,7 @@ class Matcher
           if options.ignoreCase?
             throw new Error("ignoreCase option can't be used with regexp")
           if options.wildcard?
-            throw new Error("wildcard option can't be used with regexp")     
+            throw new Error("wildcard option can't be used with regexp")
           regexpMatch = @input.match(p)
           if regexpMatch?
             doesMatch = yes
@@ -131,7 +134,7 @@ class Matcher
           nextToken
         }
         if wildcardMatch then break
-      
+
     nextInput = null
     match = null
     prevInputAndMatch = ""
@@ -161,13 +164,13 @@ class Matcher
           if element.options.length is 1
             element.type = "static"
           else
-            element.type = "select" 
+            element.type = "select"
       elements = @elements.concat element
       if wildcardMatch and element.options?
         element.options.unshift options.wildcard
       if callback?
         callback(
-          M(nextInput, @context, prevInputAndMatch, elements), 
+          M(nextInput, @context, prevInputAndMatch, elements),
           longestMatch.matchId
         )
 
@@ -185,7 +188,7 @@ class Matcher
   ###
   Matches any number.
   ###
-  matchNumber: (options, callback) -> 
+  matchNumber: (options, callback) ->
     unless @input? then return @
     if typeof options is "function"
       callback = options
@@ -205,7 +208,7 @@ class Matcher
       @context?.addHint(format: 'Number')
     return next
 
-  matchVariable: (varsAndFuns, callback) -> 
+  matchVariable: (varsAndFuns, callback) ->
     unless @input? then return @
 
     if typeof varsAndFuns is "function"
@@ -230,21 +233,21 @@ class Matcher
       callback(next, match)
     return next
 
-  matchString: (options, callback) -> 
+  matchString: (options, callback) ->
     unless @input? then return @
 
     if typeof options is "function"
       callback = options
       options = {}
 
-    options.type = "text" unless options.type 
+    options.type = "text" unless options.type
 
-    if options.wildcard? and S(@input).startsWith(options.wildcard)  
+    if options.wildcard? and S(@input).startsWith(options.wildcard)
       return @match("\"\"", options, callback)
 
     ret = M(null, @context)
     @match('"').match(/^([^"]*)(.*?)$/, (m, str) =>
-      ret = m.match('"', (m) => 
+      ret = m.match('"', (m) =>
         callback(m, str)
       )
     )
@@ -256,7 +259,7 @@ class Matcher
     openedParentheseMatch = yes
     next = this
     while openedParentheseMatch
-      m = next.match(token, (m) => 
+      m = next.match(token, (m) =>
         tokens.push token
         next = m.match(' ', optional: yes)
       )
@@ -272,7 +275,7 @@ class Matcher
     closeParentheseMatch = yes
     next = this
     while closeParentheseMatch and openedParentheseCount > 0
-      m = next.match(' ', optional: yes).match(token, (m) => 
+      m = next.match(' ', optional: yes).match(token, (m) =>
         tokens.push token
         openedParentheseCount--
         next = m
@@ -346,11 +349,11 @@ class Matcher
     last = null
     @match(_.keys(functions), (next, funcName) =>
       tokens.push funcName
-      next.match(['(', ' (', ' ( ', '( '], {acFilter: (op) => op is '('}, (next) => 
+      next.match(['(', ' (', ' ( ', '( '], {acFilter: (op) => op is '('}, (next) =>
         tokens.push '('
         next.matchFunctionCallArgs(varsAndFuns, {funcName, argn: 0}, (next, ts) =>
           tokens = tokens.concat ts
-          next.match([')', ' )'], {acFilter: (op) => op is ')'},  (next) => 
+          next.match([')', ' )'], {acFilter: (op) => op is ')'},  (next) =>
             tokens.push ')'
             last = next
           )
@@ -369,7 +372,7 @@ class Matcher
       callback = varsAndFuns
       varsAndFuns = @context
       openParanteses = 0
-    
+
     {variables, functions} = varsAndFuns
 
     if typeof openParanteses is "function"
@@ -390,7 +393,8 @@ class Matcher
       return @match([[[0], "0"]], options, callback)
 
     binarOps = ['+','-','*', '/']
-    binarOpsFull = _(binarOps).map( (op)=>[op, " #{op} ", " #{op}", "#{op} "] ).flatten().valueOf()
+    binarOpsFull = _(binarOps).map( (op) =>
+      [op, " #{op} ", " #{op}", "#{op} "] ).flatten().valueOf()
 
     last = null
     tokens = []
@@ -401,7 +405,7 @@ class Matcher
     ).or([
       ( (m) => m.matchNumber( (m, match) => tokens.push(parseFloat(match)); last = m ) ),
       ( (m) => m.matchVariable(varsAndFuns, (m, match) => tokens.push(match); last = m ) )
-      ( (m) => m.matchFunctionCall(varsAndFuns, (m, match) => 
+      ( (m) => m.matchFunctionCall(varsAndFuns, (m, match) =>
           tokens = tokens.concat match
           last = m
         )
@@ -410,8 +414,8 @@ class Matcher
       tokens = tokens.concat ptokens
       openParanteses -= ptokens.length
       last = m
-    ).match(binarOpsFull, {acFilter: (op) => op[0] is ' ' and op[op.length-1] is ' '}, (m, op) => 
-      m.matchNumericExpression(varsAndFuns, openParanteses, (m, nextTokens) => 
+    ).match(binarOpsFull, {acFilter: (op) => op[0] is ' ' and op[op.length-1] is ' '}, (m, op) =>
+      m.matchNumericExpression(varsAndFuns, openParanteses, (m, nextTokens) =>
         tokens.push(op.trim())
         tokens = tokens.concat(nextTokens)
         last = m
@@ -458,13 +462,13 @@ class Matcher
         tokens.push('"' + strPart + '"')
 
         end = m.match('"')
-        if end.hadMatch()  
+        if end.hadMatch()
           last = end
         # else test if it is a var
         else
           next = m.or([
             ( (m) => next = m.matchVariable(varsAndFuns, (m, match) => tokens.push(match) ); next ),
-            ( (m) => 
+            ( (m) =>
               retMatcher = M(null, @context)
               m.match(['{', '{ '], {acFilter: (t)-> t is '{'}, (m, match) =>
                 m.matchAnyExpression(varsAndFuns, (m, ts) =>
@@ -481,7 +485,7 @@ class Matcher
           ])
 
       )
-      
+
     if last?
       last.reduceElementsFrom(this, options)
       callback(last, tokens)
@@ -530,11 +534,11 @@ class Matcher
         when 'string', 'boolean' then _(comparators['=='].concat comparators['!='])
     ).map((c)=>" #{c} ").value()
 
-    autocompleteFilter = (v) => 
-      v.trim() in ['is', 'is not', 'equals', 'is greater than', 'is less than', 
-        'is greater or equal than', 'is less or equal than', '<', '=', '>', '<=', '>=' 
+    autocompleteFilter = (v) =>
+      v.trim() in ['is', 'is not', 'equals', 'is greater than', 'is less than',
+        'is greater or equal than', 'is less or equal than', '<', '=', '>', '<=', '>='
       ]
-    return @match(possibleComparators, acFilter: autocompleteFilter, ( (m, token) => 
+    return @match(possibleComparators, acFilter: autocompleteFilter, ( (m, token) =>
       comparator = normalizeComparator(token.trim())
       return callback(m, comparator)
     ))
@@ -547,12 +551,12 @@ class Matcher
   matchDevice: (devices, callback = null) ->
     unless @input? then return @
     devicesWithId = _(devices).map( (d) => [d, d.id] ).value()
-    devicesWithNames = _(devices).map( (d) => [d, d.name] ).value() 
+    devicesWithNames = _(devices).map( (d) => [d, d.name] ).value()
 
     matchingDevices = {}
 
 
-    onIdMatch = (m, d) => 
+    onIdMatch = (m, d) =>
       unless matchingDevices[d.id]?
         matchingDevices[d.id] = {m, d}
       else
@@ -573,14 +577,14 @@ class Matcher
       (m) => m.match(devicesWithId, wildcard: "{device}", type: "select", onIdMatch)
       # then to try match names
       (m) => m.match(
-        devicesWithNames, 
-        wildcard: "{device}", type: "select", ignoreCase: yes, 
+        devicesWithNames,
+        wildcard: "{device}", type: "select", ignoreCase: yes,
         onNameMatch)
     ])
     for id, {m, d} of matchingDevices
       callback(m, d)
     return next
-    
+
   matchTimeDurationExpression: (varsAndFuns, callback) ->
     unless @input? then return @
 
@@ -595,16 +599,16 @@ class Matcher
 
     # Parse the for-Suffix:
     timeUnits = [
-      "ms", 
-      "second", "seconds", "s", 
-      "minute", "minutes", "m", 
-      "hour", "hours", "h", 
-      "day", "days","d", 
+      "ms",
+      "second", "seconds", "s",
+      "minute", "minutes", "m",
+      "hour", "hours", "h",
+      "day", "days","d",
       "year", "years", "y"
     ]
     tokens = 0
     unit = ""
-    onTimeExpressionMatch = (m, ts) => tokens = ts  
+    onTimeExpressionMatch = (m, ts) => tokens = ts
     onMatchUnit = (m, u) => unit = u.trim()
 
     m = @matchNumericExpression(varsAndFuns, onTimeExpressionMatch).match(
@@ -625,11 +629,11 @@ class Matcher
 
     # Parse the for-Suffix:
     timeUnits = [
-      "ms", 
-      "second", "seconds", "s", 
-      "minute", "minutes", "m", 
-      "hour", "hours", "h", 
-      "day", "days","d", 
+      "ms",
+      "second", "seconds", "s",
+      "minute", "minutes", "m",
+      "hour", "hours", "h",
+      "day", "days","d",
       "year", "years", "y"
     ]
     time = 0
@@ -673,7 +677,7 @@ class Matcher
   ###
     m.inAnyOrder([
       (m) => m.match(' title:').matchString(setTitle)
-      (m) => m.match(' message:').matchString(setMessage)  
+      (m) => m.match(' message:').matchString(setMessage)
     ]).onEnd(...)
   ###
 
@@ -701,7 +705,7 @@ class Matcher
       assert m instanceof Matcher
       matches.push m
     # Get the longest match.
-    next = _.max(matches, (m) => 
+    next = _.max(matches, (m) =>
       if m.input? then m.prevInput.length else 0
     )
     return next
@@ -712,7 +716,7 @@ class Matcher
   getRemainingInput: -> @input
 
   dump: (info) ->
-    console.log(info + ":") if info? 
+    console.log(info + ":") if info?
     console.log "prevInput: \"#{@prevInput}\" "
     console.log "input: \"#{@input}\""
     return @
@@ -729,7 +733,7 @@ M.createParseContext = (variables, functions)->
     functions
     addHint: ({autocomplete: a, format: f}) ->
       if a?
-        if Array.isArray a 
+        if Array.isArray a
           @autocomplete = @autocomplete.concat a
         else @autocomplete.push a
       if f?
@@ -741,7 +745,7 @@ M.createParseContext = (variables, functions)->
     hasErrors: -> (@errors.length > 0)
     getErrorsAsString: -> _(@errors).reduce((ms, m) => "#{ms}, #{m}")
     addElements: (input, elements) -> @elements[input] = elements
-    finalize: () -> 
+    finalize: () ->
       @autocomplete = _(@autocomplete).uniq().sortBy((s)=>s.toLowerCase()).value()
       @format = _(@format).uniq().sortBy((s)=>s.toLowerCase()).value()
   }
