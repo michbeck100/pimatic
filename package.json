@@ -57,7 +57,7 @@
     "is-my-json-valid": "^2.17.1",
     "jsonlint": "git+https://github.com/sweetpi/jsonlint.git#master",
     "knex": "^0.14.2",
-    "lodash": "^3.10.1",
+    "lodash": "^4.17.5",
     "logrotate-stream": "^0.2.3",
     "method-override": "^2.3.7",
     "moment": "^2.16.0",
