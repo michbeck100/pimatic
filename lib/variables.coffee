@@ -48,9 +48,9 @@ module.exports = (env) ->
   class DeviceAttributeVariable extends Variable
     constructor: (vars, _device, _attrName) ->
       super(
-        vars, 
+        vars,
         "#{_device.id}.#{_attrName}",
-        'attribute', 
+        'attribute',
         _device.attributes[_attrName].unit,
         yes
       )
@@ -77,8 +77,8 @@ module.exports = (env) ->
       @_device.removeListener(@_attrName, @_attrListener)
       @_device.removeListener("changed", @_deviceChangedListener)
       @_device.removeListener("destroyed", @_deviceDestroyedListener)
-      
-    getUpdatedValue: (varsInEvaluation = {}) -> 
+
+    getUpdatedValue: (varsInEvaluation = {}) ->
       return @_device.getUpdatedAttributeValue(@_attrName, varsInEvaluation)
 
     destroy: =>
@@ -115,7 +115,7 @@ module.exports = (env) ->
       @unit = unit
       variablesInExpr = (t.substring(1) for t in tokens when @_vars.isAVariable(t))
       doUpdate = ( =>
-        @getUpdatedValue().then( (value) => 
+        @getUpdatedValue().then( (value) =>
           @_setValue(value)
         ).catch( (error) =>
           env.logger.error("Error updating expression value:", error.message)
@@ -136,7 +136,7 @@ module.exports = (env) ->
 
     getUpdatedValue: (varsInEvaluation = {})->
       if @type is "value" then return Promise.resolve(@value)
-      else 
+      else
         assert @exprTokens?
         return @_vars.evaluateExpression(@exprTokens, varsInEvaluation)
 
@@ -146,7 +146,7 @@ module.exports = (env) ->
         jsonObject.exprInputStr = @exprInputStr
         jsonObject.exprTokens = @exprTokens
       return jsonObject
-    
+
     destroy: ->
       @_removeListener()
 
@@ -206,14 +206,14 @@ module.exports = (env) ->
             """
             type: "number"
             multiple: yes
-        exec: (args...) ->  _.reduce(_.map(args, parseFloat), (a, b) -> a+b) / args.length    
+        exec: (args...) ->  _.reduce(_.map(args, parseFloat), (a, b) -> a+b) / args.length
       random:
         args:
           min:
             type: "number"
           max:
             type: "number"
-        exec: (min, max) -> 
+        exec: (min, max) ->
           minf = parseFloat(min)
           maxf = parseFloat(max)
           return Math.floor( Math.random() * (maxf+1-minf) ) + minf
@@ -510,14 +510,19 @@ module.exports = (env) ->
 
     constructor: (@framework, @variablesConfig) ->
       super()
-      # For each new device add a variable for every attribute
+      # For each attribute of a new device add a variable
       @framework.on 'deviceAdded', (device) =>
         for attrName, attr of device.attributes
           @_addVariable(
             new DeviceAttributeVariable(this, device, attrName)
           )
-
-
+      # For each new attribute of a changed device add a variable
+      @framework.on 'deviceChanged', (device) =>
+        for attrName, attr of device.attributes
+          if not @variables["#{device.id}.#{attrName}"]?
+            @_addVariable(
+              new DeviceAttributeVariable(this, device, attrName)
+            )
     init: () ->
       # Import variables
       setExpressions = []
@@ -529,7 +534,7 @@ module.exports = (env) ->
           if variable.expression?
             try
               exprVar = new ExpressionValueVariable(
-                this, 
+                this,
                 variable.name,
                 'expression',
                 variable.unit
@@ -537,10 +542,10 @@ module.exports = (env) ->
               # We first add the variable, but parse the expression later, because it could
               # contain other variables, added later
               @_addVariable(exprVar)
-              setExpressions.push( -> 
+              setExpressions.push( ->
                 try
                   exprVar.setToExpression(variable.expression.trim())
-                catch
+                catch e
                   env.logger.error(
                     "Error parsing expression variable #{variable.name}:", e.message
                   )
@@ -554,8 +559,8 @@ module.exports = (env) ->
           else
             @_addVariable(
               new ExpressionValueVariable(
-                this, 
-                variable.name, 
+                this,
+                variable.name,
                 'value',
                 variable.unit,
                 variable.value
@@ -597,7 +602,7 @@ module.exports = (env) ->
     _emitVariableRemoved: (variable) ->
       @emit('variableRemoved', variable)
 
-    getVariablesAndFunctions: (ops) -> 
+    getVariablesAndFunctions: (ops) ->
       unless ops?
         return {variables: @variables, functions: @functions}
       else
@@ -609,7 +614,7 @@ module.exports = (env) ->
           variables,
           functions: @functions
         }
-     
+
 
     parseVariableExpression: (expression) ->
       tokens = null
@@ -636,7 +641,7 @@ module.exports = (env) ->
         variable.setToExpression(inputStr, unit)
         @_emitVariableChanged(variable)
       return variable
-    
+
 
 
     _checkVariableName: (name) ->
@@ -697,7 +702,7 @@ module.exports = (env) ->
         if varsInEvaluation[name]?
           if varsInEvaluation[name].value?
             return Promise.resolve(varsInEvaluation[name].value)
-          else 
+          else
             return Promise.try => throw new Error("Dependency cycle detected for variable #{name}")
         else
           varsInEvaluation[name] = {}
@@ -790,8 +795,8 @@ module.exports = (env) ->
     updateVariableOrder: (variableOrder) ->
       assert variableOrder? and Array.isArray variableOrder
       @framework.config.variables = @variablesConfig = _.sortBy(
-        @variablesConfig,  
-        (variable) => 
+        @variablesConfig,
+        (variable) =>
           index = variableOrder.indexOf variable.name
           return if index is -1 then 99999 else index # push it to the end if not found
       )
